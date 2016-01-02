@@ -29,49 +29,57 @@ import (
 
 const (
 	templateColorAnsi = "{{ $cmd := . }}" +
+	"{{if .HasParent}}" +
 	"\x1b[1m用法:\x1b[0m " +
 	"{{if .Runnable}}" +
-	"\n{{.Use}}{{if .HasFlags}} [FLAGS]{{end}}" +
+	"{{if not (eq .Parent.Use \"hicto\")}}" +
+	"\n{{ .Parent.Name}} {{ .Use}}{{if .HasFlags}} [FLAGS]{{end}}\n" +
+	"{{else}}" +
+	"\n{{ .Use}}{{if .HasFlags}} [FLAGS]{{end}}\n" +
+	"{{end}}" +
 	"{{end}}" +
 	"{{if .HasSubCommands}}" +
-	"\nCOMMAND [FLAGS]" +
-	"{{end}}\n" +
-	"{{ if .HasSubCommands}}" +
-	"\n\x1b[1m可用COMMAND:\x1b[0m " +
-	"{{range .Commands}}" +
 	"{{if .Runnable}}" +
+	"{{ .Use}} COMMAND{{if .HasFlags}} [FLAGS]{{end}}\n" +
+	"{{else}}" +
+	"\n{{ .Use}} COMMAND{{if .HasFlags}} [FLAGS]{{end}}\n" +
+	"{{end}}" +
+	"{{end}}" +
+	"{{else}}" +
+	"{{if .Runnable}}" +
+	"\n{{.Use}}{{if .HasFlags}} [FLAGS]{{end}}\n" +
+	"{{end}}" +
+	"{{if .HasSubCommands}}" +
+	"{{if .Runnable}}" +
+	"{{ .Use}} COMMAND{{if .HasFlags}} [FLAGS]{{end}}\n" +
+	"{{else}}" +
+	"{{if (eq .Use \"hicto\")}}" +
+	"COMMAND [FLAGS]\n" +
+	"{{else}}" +
+	"{{ .Use}} COMMAND{{if .HasFlags}} [FLAGS]{{end}}\n" +
+	"{{end}}" +
+	"{{end}}" +
+	"{{end}}" +
+	"{{end}}" +
+	"{{ if .HasSubCommands}}" +
+	"\n\x1b[1m可用COMMAND:\x1b[0m\n" +
+	"{{range .Commands}}" +
 	"{{if not (eq .Use \"help [command]\") }}" +
-	"\n\x1b[32m{{rpad .Use .UsagePadding }}\x1b[0m {{.Short}}" +
+	"\x1b[32m{{rpad .Use .UsagePadding }}\x1b[0m {{.Short}}\n" +
 	"{{end}}" +
 	"{{end}}" +
-	"{{end}}\n" +
 	"{{end}}" +
-	"{{ if .HasFlags}}" +
+	"{{if .HasFlags}}" +
 	"\n\x1b[1m可用FLAG:\x1b[0m\n" +
 	"{{.Flags.FlagUsages}}" +
 	"{{end}}" +
+	"{{if .HasSubCommands}}" +
 	"{{if .HasParent}}" +
-	"{{if and (gt .Commands 0) (gt .Parent.Commands 1) }}" +
-	"\n\x1b[1m更多帮助主题: \x1b[0m" +
-	"{{if gt .Commands 0 }}" +
-	"{{range .Commands}}" +
-	"{{if not .Runnable}}" +
-	" {{rpad .CommandPath .CommandPathPadding}} {{.Short}}" +
+	"\n使用 \x1b[1mhelp {{ .Name}} COMMAND\x1b[0m 来获取每个命令的更多帮助\n\x1b[0m" +
+	"{{else}}" +
+	"\n使用 \x1b[1mhelp COMMAND\x1b[0m 来获取每个命令的更多帮助\n\x1b[0m" +
 	"{{end}}" +
-	"{{end}}" +
-	"{{end}}" +
-	"{{if gt .Parent.Commands 1 }}" +
-	"{{range .Parent.Commands}}" +
-	"{{if .Runnable}}" +
-	"{{if not (eq .Name $cmd.Name) }}" +
-	"{{end}}" +
-	"\n{{rpad .CommandPath .CommandPathPadding}} {{.Short}}" +
-	"{{end}}" +
-	"{{end}}" +
-	"{{end}}" +
-	"{{end}}" +
-	"{{end}}" +
-	"\n使用 \x1b[1mhelp COMMAND\x1b[0m 来获取关于该命令的更多帮助\n\x1b[0m"
+	"{{end}}"
 )
 
 var writer client.AuthInfoWriter
@@ -79,9 +87,9 @@ var codes map[string]*models.Code
 
 // This represents the base command when called without any subcommands
 var RootCmd = &cobra.Command{
-	Use:   "hicto",
-	Short: "HiCTO 客户端命令行工具",
-	Long:  "HiCTO 客户端命令行工具",
+	Use:           "hicto",
+	Short:         "HiCTO 客户端命令行工具",
+	Long:          "HiCTO 客户端命令行工具",
 	SilenceErrors: true,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:

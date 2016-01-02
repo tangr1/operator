@@ -80,47 +80,38 @@ func UpdateStartup(id int64, reviewStatus int32, advice string) {
 
 // startupCmd represents the startup command
 var startupCmd = &cobra.Command{
-	Use:   "startup [STARTUP-ID] [approve|sendback] [ADVICE]",
+	Use:   "startup",
 	Short: "创业公司相关命令",
-	Long:  `创业公司相关命令，可以查看审核创业公司列表并进行审核`,
+	Long:  "创业公司相关命令",
+}
+
+var startupListCmd = &cobra.Command{
+	Use:   "list",
+	Short: "查看创业公司列表",
+	Long: "查看创业公司列表",
+	Run: func(cmd *cobra.Command, args []string) {
+		ListStartup()
+	},
+}
+
+var startupGetCmd = &cobra.Command{
+	Use:   "get ID",
+	Short: "查看单个创业公司",
+	Long: "查看单个创业公司",
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) < 1 {
-			ListStartup()
-		} else if len(args) == 1 {
-			id, _ := strconv.ParseInt(args[0], 10, 64)
-			GetStartup(id)
+			cmd.Usage()
 		} else {
 			id, _ := strconv.ParseInt(args[0], 10, 64)
-			switch args[1] {
-			case "approve":
-				UpdateStartup(id, 2, "")
-				break
-			case "sendback":
-				if len(args) < 3 {
-					fmt.Println("请给出修改意见")
-					os.Exit(1)
-				}
-				UpdateStartup(id, 3, args[2])
-				break
-			default:
-				fmt.Printf("不允许的动作: %s\n", args[1])
-				os.Exit(1)
-			}
+			GetStartup(id)
 		}
 	},
 }
 
 func init() {
-	RootCmd.AddCommand(startupCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// startupCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
+	startupListCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	startupCmd.AddCommand(startupListCmd)
+	startupCmd.AddCommand(startupGetCmd)
 	startupCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
-
+	RootCmd.AddCommand(startupCmd)
 }

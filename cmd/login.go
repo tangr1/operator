@@ -29,7 +29,7 @@ var operator bool
 
 // loginCmd represents the login command
 var loginCmd = &cobra.Command{
-	Use:   "login [EMAIL] [FLAGS]",
+	Use:   "login EMAIL",
 	Short: "登录相关命令",
 	Long: "登录相关命令",
 	Run: func(cmd *cobra.Command, args []string) {
