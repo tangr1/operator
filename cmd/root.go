@@ -25,6 +25,11 @@ import (
 	"github.com/tangr1/hicto/models"
 	"strings"
 	"text/template"
+	"reflect"
+	"github.com/fatih/structs"
+	"github.com/olekukonko/tablewriter"
+	"github.com/gosuri/uitable"
+	"github.com/labstack/gommon/color"
 )
 
 const (
@@ -32,10 +37,12 @@ const (
 	"{{if .HasParent}}" +
 	"\x1b[1m用法:\x1b[0m " +
 	"{{if .Runnable}}" +
+	"{{if not .HasSubCommands}}" +
 	"{{if not (eq .Parent.Use \"hicto\")}}" +
 	"\n{{ .Parent.Name}} {{ .Use}}{{if .HasFlags}} [FLAGS]{{end}}\n" +
 	"{{else}}" +
 	"\n{{ .Use}}{{if .HasFlags}} [FLAGS]{{end}}\n" +
+	"{{end}}" +
 	"{{end}}" +
 	"{{end}}" +
 	"{{if .HasSubCommands}}" +
@@ -144,4 +151,76 @@ func UsageFunc(cmd *cobra.Command) error {
 	usageTmpl := templateColorAnsi
 	template.Must(t.Parse(usageTmpl))
 	return t.Execute(cmd.Out(), cmd)
+}
+
+func ListRecords(records []interface{}) {
+	s := structs.New(records[0])
+	table := tablewriter.NewWriter(os.Stdout)
+	var header []string
+	for _, field := range s.Fields() {
+		if len(field.Tag("list")) > 0 {
+			header = append(header, field.Tag("chinese"));
+		}
+	}
+	table.SetHeader(header)
+	for _, record := range records {
+		var body []string
+		s := structs.New(record)
+		for _, field := range s.Fields() {
+			if len(field.Tag("list")) > 0 {
+				body = append(body, field.Value().(string))
+			}
+		}
+		table.Append(body)
+	}
+	table.Render()
+}
+
+func ShowRecord(record interface{}) {
+	table := uitable.New()
+	table.MaxColWidth = 120
+	table.Wrap = true // wrap columns
+	s := structs.New(record)
+	for _, field := range s.Fields() {
+		table.AddRow(color.Bold(field.Tag("chinese")), field.Value().(string));
+	}
+	fmt.Println(table)
+}
+
+func ModelToRecord(from interface{}, to interface{}) {
+	fromStruct := structs.New(from)
+	toStruct := structs.New(to)
+	for _, fromField := range fromStruct.Fields() {
+		if fromField.Kind() == reflect.Struct {
+			ModelToRecord(fromField.Value(), to)
+		}
+		toField, ok := toStruct.FieldOk(fromField.Name())
+		if !ok {
+			continue
+		}
+		switch (fromField.Kind()) {
+		case reflect.String:
+			toField.Set(fromField.Value().(string))
+			break;
+		case reflect.Int64:
+			toField.Set(strconv.FormatInt(fromField.Value().(int64), 10))
+			break;
+		case reflect.Bool:
+			if (fromField.Value().(bool)) {
+				toField.Set("是")
+			} else {
+				toField.Set("否")
+			}
+			break;
+		case reflect.Int32:
+			if len(toField.Tag("code")) > 0 {
+				toField.Set(GetCode(toField.Tag("code"), fromField.Value().(int32)))
+			} else {
+				toField.Set(strconv.Itoa(int(fromField.Value().(int32))))
+			}
+			break;
+		default:
+			break;
+		}
+	}
 }

@@ -23,6 +23,7 @@ import (
 )
 
 func main() {
+	cmd.RootCmd.Help()
 	rl, err := readline.NewEx(&readline.Config{
 		Prompt: "hicto > ",
 		HistoryFile: "/tmp/readline.tmp",
