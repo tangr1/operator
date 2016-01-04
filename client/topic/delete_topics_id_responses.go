@@ -77,21 +77,13 @@ func NewDeleteTopicsIDOK() *DeleteTopicsIDOK {
 成功删除主题
 */
 type DeleteTopicsIDOK struct {
-	Payload *models.Topic
 }
 
 func (o *DeleteTopicsIDOK) Error() string {
-	return fmt.Sprintf("[DELETE /topics/{id}/][%d] deleteTopicsIdOK  %+v", 200, o.Payload)
+	return fmt.Sprintf("[DELETE /topics/{id}/][%d] deleteTopicsIdOK ", 200)
 }
 
 func (o *DeleteTopicsIDOK) readResponse(response client.Response, consumer httpkit.Consumer, formats strfmt.Registry) error {
-
-	o.Payload = new(models.Topic)
-
-	// response payload
-	if err := consumer.Consume(response.Body(), o.Payload); err != nil {
-		return err
-	}
 
 	return nil
 }

@@ -30,6 +30,7 @@ import (
 	"github.com/olekukonko/tablewriter"
 	"github.com/gosuri/uitable"
 	"github.com/labstack/gommon/color"
+	fatihcolor "github.com/fatih/color"
 	httptransport "github.com/go-swagger/go-swagger/httpkit/client"
 	"github.com/go-swagger/go-swagger/spec"
 	"github.com/go-swagger/go-swagger/strfmt"
@@ -107,14 +108,26 @@ var RootCmd = &cobra.Command{
 	//	Run: func(cmd *cobra.Command, args []string) { },
 }
 
-func Execute(server string) error {
+func Execute() error {
+	return RootCmd.Execute()
+}
+
+func init() {
+	// Here you will define your flags and configuration settings.
+	// Cobra supports Persistent Flags, which, if defined here,
+	// will be global for your application.
+	// RootCmd.PersistentFlags().StringVarP(&server, "server", "s", "localhost:8090", "服务器地址")
 	swaggerSpec, err := spec.New(operations.SwaggerJSON, "")
 	if err != nil {
 		// the swagger spec is valid because it was used to generated this code.
 		panic(err)
 	}
 	runtime := httptransport.New(swaggerSpec)
-	runtime.Host = server
+	if len(os.Args) > 1 {
+		runtime.Host = os.Args[1]
+	} else {
+		runtime.Host = "localhost:8090"
+	}
 	apiClient = operations.New(runtime, strfmt.Default)
 	codeResult, err := apiClient.Misc.GetCodes(nil, writer)
 	if err != nil {
@@ -126,14 +139,6 @@ func Execute(server string) error {
 		codes[code.Name] = code
 	}
 
-	return RootCmd.Execute()
-}
-
-func init() {
-	// Here you will define your flags and configuration settings.
-	// Cobra supports Persistent Flags, which, if defined here,
-	// will be global for your application.
-	// RootCmd.PersistentFlags().StringVarP(&server, "server", "s", "localhost:8090", "服务器地址")
 	RootCmd.SetUsageFunc(UsageFunc)
 }
 
@@ -160,6 +165,10 @@ func UsageFunc(cmd *cobra.Command) error {
 }
 
 func ListRecords(records []interface{}) {
+	if len(records) == 0 {
+		fatihcolor.Magenta("没有符合查询条件的数据")
+		return;
+	}
 	s := structs.New(records[0])
 	table := tablewriter.NewWriter(os.Stdout)
 	var header []string
@@ -193,11 +202,20 @@ func ShowRecord(record interface{}) {
 	fmt.Println(table)
 }
 
+func StringInSlice(a string, list []string) bool {
+	for _, b := range list {
+		if strings.Compare(a, b) == 0 {
+			return true
+		}
+	}
+	return false
+}
+
 func ModelToRecord(from interface{}, to interface{}) {
 	fromStruct := structs.New(from)
 	toStruct := structs.New(to)
 	for _, fromField := range fromStruct.Fields() {
-		if fromField.Kind() == reflect.Struct {
+		if fromField.Kind() == reflect.Struct && StringInSlice(fromField.Name(), []string{"Resource", "User", "Post"}) {
 			ModelToRecord(fromField.Value(), to)
 		}
 		toField, ok := toStruct.FieldOk(fromField.Name())

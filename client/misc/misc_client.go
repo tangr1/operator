@@ -69,6 +69,29 @@ func (a *Client) GetCodes(params *GetCodesParams, authInfo client.AuthInfoWriter
 	return result.(*GetCodesOK), nil
 }
 
+/*获取静态文件列表
+
+获取静态文件列表
+
+*/
+func (a *Client) GetDocs(params *GetDocsParams, authInfo client.AuthInfoWriter) (*GetDocsOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewGetDocsParams()
+	}
+
+	result, err := a.transport.Submit(&client.Operation{
+		ID:       "GetDocs",
+		Params:   params,
+		Reader:   &GetDocsReader{formats: a.formats},
+		AuthInfo: authInfo,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.(*GetDocsOK), nil
+}
+
 /*查询邀请码
 
 得到指定邀请码的具体信息

@@ -78,28 +78,6 @@ func ToStartupRecord(from *models.Startup) interface{} {
 	return to
 }
 
-func ListStartup() {
-	result, err := apiClient.Startup.GetStartups(nil, writer)
-	if err != nil {
-		color.Red("获取创业公司列表失败: %v\n", err)
-		return
-	}
-	startups := make([]interface{}, len(result.Payload.Content))
-	for i, from := range result.Payload.Content {
-		startups[i] = ToStartupRecord(&from)
-	}
-	ListRecords(startups)
-}
-
-func GetStartup(id int64) {
-	result, err := apiClient.Startup.GetStartupsID(&startup.GetStartupsIDParams{ID: id}, writer)
-	if err == nil {
-		ShowRecord(ToStartupRecord(result.Payload))
-	} else {
-		color.Red("获取创业公司失败: %v\n", err)
-	}
-}
-
 func UpdateStartup(id int64, reviewStatus int32, advice string) {
 	body := &models.UpdateStartupRequest{ReviewStatus: reviewStatus, ModifyReason: advice}
 	result, err := apiClient.Startup.PutStartupsID(&startup.PutStartupsIDParams{ID: id, Body: body}, writer)
@@ -125,7 +103,36 @@ var startupListCmd = &cobra.Command{
 	Short: "查看创业公司列表",
 	Long: "查看创业公司列表",
 	Run: func(cmd *cobra.Command, args []string) {
-		ListStartup()
+		page, _ := strconv.ParseInt(cmd.Flag("page").Value.String(), 10, 64)
+		pageSize, _ := strconv.ParseInt(cmd.Flag("page-size").Value.String(), 10, 64)
+		result, err := apiClient.Startup.GetStartups(&startup.GetStartupsParams{page, pageSize, 2,}, writer)
+		if err != nil {
+			color.Red("获取创业公司列表失败: %v\n", err)
+			return
+		}
+		startups := make([]interface{}, len(result.Payload.Content))
+		for i, from := range result.Payload.Content {
+			startups[i] = ToStartupRecord(&from)
+		}
+		if operator {
+			result, err = apiClient.Startup.GetStartups(&startup.GetStartupsParams{page, pageSize, 1,}, writer)
+			if err != nil {
+				color.Red("获取创业公司列表失败: %v\n", err)
+				return
+			}
+			for _, from := range result.Payload.Content {
+				startups = append(startups, ToStartupRecord(&from))
+			}
+			result, err = apiClient.Startup.GetStartups(&startup.GetStartupsParams{page, pageSize, 3,}, writer)
+			if err != nil {
+				color.Red("获取创业公司列表失败: %v\n", err)
+				return
+			}
+			for _, from := range result.Payload.Content {
+				startups = append(startups, ToStartupRecord(&from))
+			}
+		}
+		ListRecords(startups)
 	},
 }
 
@@ -136,7 +143,12 @@ var startupGetCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) == 1 {
 			id, _ := strconv.ParseInt(args[0], 10, 64)
-			GetStartup(id)
+			result, err := apiClient.Startup.GetStartupsID(&startup.GetStartupsIDParams{ID: id}, writer)
+			if err == nil {
+				ShowRecord(ToStartupRecord(result.Payload))
+			} else {
+				color.Red("获取创业公司失败: %v\n", err)
+			}
 		} else {
 			cmd.Usage()
 		}
@@ -195,12 +207,14 @@ var startupSendbackCmd = &cobra.Command{
 }
 
 func init() {
+	startupListCmd.Flags().Int64P("page", "p", 0, "页码")
+	startupListCmd.Flags().Int64P("page-size", "s", 100, "每页条目数")
 	startupCmd.AddCommand(startupListCmd)
 	startupCmd.AddCommand(startupGetCmd)
 	startupCmd.AddCommand(startupApproveCmd)
 	startupCmd.AddCommand(startupSendbackCmd)
 	startupUpdateCmd.Flags().StringVarP(&reviewStatus, "review-status", "r", "", "审核状态, 可为approve或者sendback")
-	startupUpdateCmd.Flags().StringVarP(&reviewStatus, "advice", "a", "", "修改建议, 当审核状态为sendback时需要填写")
+	startupUpdateCmd.Flags().StringVarP(&advice, "advice", "a", "", "修改建议, 当审核状态为sendback时需要填写")
 	startupCmd.AddCommand(startupUpdateCmd)
 	RootCmd.AddCommand(startupCmd)
 }

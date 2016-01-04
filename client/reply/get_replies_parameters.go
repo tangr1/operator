@@ -94,35 +94,71 @@ func (o *GetRepliesParams) WriteToRequest(r client.Request, reg strfmt.Registry)
 
 	var res []error
 
-	// path param authorid
-	if err := r.SetPathParam("authorid", swag.FormatInt64(o.Authorid)); err != nil {
-		return err
+	// query param authorid
+	qrAuthorid := o.Authorid
+	qAuthorid := swag.FormatInt64(qrAuthorid)
+	if qAuthorid != "" && qAuthorid != "-1" {
+		if err := r.SetQueryParam("authorid", qAuthorid); err != nil {
+			return err
+		}
 	}
 
-	// path param onlyaccepted
-	if err := r.SetPathParam("onlyaccepted", swag.FormatBool(o.Onlyaccepted)); err != nil {
-		return err
+	// query array param authorid
+
+	// query param onlyaccepted
+	qrOnlyaccepted := o.Onlyaccepted
+	qOnlyaccepted := swag.FormatBool(qrOnlyaccepted)
+	if qOnlyaccepted != "" && qOnlyaccepted != "-1" {
+		if err := r.SetQueryParam("onlyaccepted", qOnlyaccepted); err != nil {
+			return err
+		}
 	}
 
-	// path param page
-	if err := r.SetPathParam("page", swag.FormatInt64(o.Page)); err != nil {
-		return err
+	// query array param onlyaccepted
+
+	// query param page
+	qrPage := o.Page
+	qPage := swag.FormatInt64(qrPage)
+	if qPage != "" && qPage != "-1" {
+		if err := r.SetQueryParam("page", qPage); err != nil {
+			return err
+		}
 	}
 
-	// path param pagesize
-	if err := r.SetPathParam("pagesize", swag.FormatInt64(o.Pagesize)); err != nil {
-		return err
+	// query array param page
+
+	// query param pagesize
+	qrPagesize := o.Pagesize
+	qPagesize := swag.FormatInt64(qrPagesize)
+	if qPagesize != "" && qPagesize != "-1" {
+		if err := r.SetQueryParam("pagesize", qPagesize); err != nil {
+			return err
+		}
 	}
 
-	// path param startup
-	if err := r.SetPathParam("startup", swag.FormatBool(o.Startup)); err != nil {
-		return err
+	// query array param pagesize
+
+	// query param startup
+	qrStartup := o.Startup
+	qStartup := swag.FormatBool(qrStartup)
+	if qStartup != "" && qStartup != "-1" {
+		if err := r.SetQueryParam("startup", qStartup); err != nil {
+			return err
+		}
 	}
 
-	// path param topicid
-	if err := r.SetPathParam("topicid", swag.FormatInt64(o.Topicid)); err != nil {
-		return err
+	// query array param startup
+
+	// query param topicid
+	qrTopicid := o.Topicid
+	qTopicid := swag.FormatInt64(qrTopicid)
+	if qTopicid != "" && qTopicid != "-1" {
+		if err := r.SetQueryParam("topicid", qTopicid); err != nil {
+			return err
+		}
 	}
+
+	// query array param topicid
 
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)

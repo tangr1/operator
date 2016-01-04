@@ -83,30 +83,60 @@ func (o *GetCsecQueryParams) WriteToRequest(r client.Request, reg strfmt.Registr
 
 	var res []error
 
-	// path param businessid
-	if err := r.SetPathParam("businessid", swag.FormatInt64(o.Businessid)); err != nil {
-		return err
+	// query param businessid
+	qrBusinessid := o.Businessid
+	qBusinessid := swag.FormatInt64(qrBusinessid)
+	if qBusinessid != "" && qBusinessid != "-1" {
+		if err := r.SetQueryParam("businessid", qBusinessid); err != nil {
+			return err
+		}
 	}
 
-	// path param captype
-	if err := r.SetPathParam("captype", swag.FormatInt64(o.Captype)); err != nil {
-		return err
+	// query array param businessid
+
+	// query param captype
+	qrCaptype := o.Captype
+	qCaptype := swag.FormatInt64(qrCaptype)
+	if qCaptype != "" && qCaptype != "-1" {
+		if err := r.SetQueryParam("captype", qCaptype); err != nil {
+			return err
+		}
 	}
 
-	// path param sceneid
-	if err := r.SetPathParam("sceneid", swag.FormatInt64(o.Sceneid)); err != nil {
-		return err
+	// query array param captype
+
+	// query param sceneid
+	qrSceneid := o.Sceneid
+	qSceneid := swag.FormatInt64(qrSceneid)
+	if qSceneid != "" && qSceneid != "-1" {
+		if err := r.SetQueryParam("sceneid", qSceneid); err != nil {
+			return err
+		}
 	}
 
-	// path param userid
-	if err := r.SetPathParam("userid", swag.FormatInt64(o.Userid)); err != nil {
-		return err
+	// query array param sceneid
+
+	// query param userid
+	qrUserid := o.Userid
+	qUserid := swag.FormatInt64(qrUserid)
+	if qUserid != "" && qUserid != "-1" {
+		if err := r.SetQueryParam("userid", qUserid); err != nil {
+			return err
+		}
 	}
 
-	// path param userip
-	if err := r.SetPathParam("userip", o.Userip); err != nil {
-		return err
+	// query array param userid
+
+	// query param userip
+	qrUserip := o.Userip
+	qUserip := qrUserip
+	if qUserip != "" && qUserip != "-1" {
+		if err := r.SetQueryParam("userip", qUserip); err != nil {
+			return err
+		}
 	}
+
+	// query array param userip
 
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)

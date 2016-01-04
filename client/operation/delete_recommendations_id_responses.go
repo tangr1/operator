@@ -77,21 +77,13 @@ func NewDeleteRecommendationsIDOK() *DeleteRecommendationsIDOK {
 成功删除推荐
 */
 type DeleteRecommendationsIDOK struct {
-	Payload *models.Recommendation
 }
 
 func (o *DeleteRecommendationsIDOK) Error() string {
-	return fmt.Sprintf("[DELETE /recommendations/{id}/][%d] deleteRecommendationsIdOK  %+v", 200, o.Payload)
+	return fmt.Sprintf("[DELETE /recommendations/{id}/][%d] deleteRecommendationsIdOK ", 200)
 }
 
 func (o *DeleteRecommendationsIDOK) readResponse(response client.Response, consumer httpkit.Consumer, formats strfmt.Registry) error {
-
-	o.Payload = new(models.Recommendation)
-
-	// response payload
-	if err := consumer.Consume(response.Body(), o.Payload); err != nil {
-		return err
-	}
 
 	return nil
 }

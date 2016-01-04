@@ -77,21 +77,13 @@ func NewDeleteStarsIDOK() *DeleteStarsIDOK {
 成功删除明星
 */
 type DeleteStarsIDOK struct {
-	Payload *models.Star
 }
 
 func (o *DeleteStarsIDOK) Error() string {
-	return fmt.Sprintf("[DELETE /stars/{id}/][%d] deleteStarsIdOK  %+v", 200, o.Payload)
+	return fmt.Sprintf("[DELETE /stars/{id}/][%d] deleteStarsIdOK ", 200)
 }
 
 func (o *DeleteStarsIDOK) readResponse(response client.Response, consumer httpkit.Consumer, formats strfmt.Registry) error {
-
-	o.Payload = new(models.Star)
-
-	// response payload
-	if err := consumer.Consume(response.Body(), o.Payload); err != nil {
-		return err
-	}
 
 	return nil
 }

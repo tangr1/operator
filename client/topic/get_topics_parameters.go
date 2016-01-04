@@ -51,6 +51,11 @@ type GetTopicsParams struct {
 
 	*/
 	Startupid int64
+	/*Status
+	  主题状态
+
+	*/
+	Status int64
 	/*Unresolved
 	  是否未解决问题优先
 
@@ -99,6 +104,12 @@ func (o *GetTopicsParams) WithStartupid(startupid int64) *GetTopicsParams {
 	return o
 }
 
+// WithStatus adds the status to the get topics params
+func (o *GetTopicsParams) WithStatus(status int64) *GetTopicsParams {
+	o.Status = status
+	return o
+}
+
 // WithUnresolved adds the unresolved to the get topics params
 func (o *GetTopicsParams) WithUnresolved(unresolved bool) *GetTopicsParams {
 	o.Unresolved = unresolved
@@ -116,45 +127,104 @@ func (o *GetTopicsParams) WriteToRequest(r client.Request, reg strfmt.Registry) 
 
 	var res []error
 
-	// path param authorid
-	if err := r.SetPathParam("authorid", swag.FormatInt64(o.Authorid)); err != nil {
-		return err
+	// query param authorid
+	qrAuthorid := o.Authorid
+	qAuthorid := swag.FormatInt64(qrAuthorid)
+	if qAuthorid != "" && qAuthorid != "-1" {
+		if err := r.SetQueryParam("authorid", qAuthorid); err != nil {
+			return err
+		}
 	}
 
-	// path param category
-	if err := r.SetPathParam("category", o.Category); err != nil {
-		return err
+	// query array param authorid
+
+	// query param category
+	qrCategory := o.Category
+	qCategory := qrCategory
+	if qCategory != "" && qCategory != "-1" {
+		if err := r.SetQueryParam("category", qCategory); err != nil {
+			return err
+		}
 	}
 
-	// path param page
-	if err := r.SetPathParam("page", swag.FormatInt64(o.Page)); err != nil {
-		return err
+	// query array param category
+
+	// query param page
+	qrPage := o.Page
+	qPage := swag.FormatInt64(qrPage)
+	if qPage != "" && qPage != "-1" {
+		if err := r.SetQueryParam("page", qPage); err != nil {
+			return err
+		}
 	}
 
-	// path param pagesize
-	if err := r.SetPathParam("pagesize", swag.FormatInt64(o.Pagesize)); err != nil {
-		return err
+	// query array param page
+
+	// query param pagesize
+	qrPagesize := o.Pagesize
+	qPagesize := swag.FormatInt64(qrPagesize)
+	if qPagesize != "" && qPagesize != "-1" {
+		if err := r.SetQueryParam("pagesize", qPagesize); err != nil {
+			return err
+		}
 	}
 
-	// path param resolved
-	if err := r.SetPathParam("resolved", swag.FormatBool(o.Resolved)); err != nil {
-		return err
+	// query array param pagesize
+
+	// query param resolved
+	qrResolved := o.Resolved
+	qResolved := swag.FormatBool(qrResolved)
+	if qResolved != "" && qResolved != "-1" {
+		if err := r.SetQueryParam("resolved", qResolved); err != nil {
+			return err
+		}
 	}
 
-	// path param startupid
-	if err := r.SetPathParam("startupid", swag.FormatInt64(o.Startupid)); err != nil {
-		return err
+	// query array param resolved
+
+	// query param startupid
+	qrStartupid := o.Startupid
+	qStartupid := swag.FormatInt64(qrStartupid)
+	if qStartupid != "" && qStartupid != "-1" {
+		if err := r.SetQueryParam("startupid", qStartupid); err != nil {
+			return err
+		}
 	}
 
-	// path param unresolved
-	if err := r.SetPathParam("unresolved", swag.FormatBool(o.Unresolved)); err != nil {
-		return err
+	// query array param startupid
+
+	// query param status
+	qrStatus := o.Status
+	qStatus := swag.FormatInt64(qrStatus)
+	if qStatus != "" && qStatus != "-1" {
+		if err := r.SetQueryParam("status", qStatus); err != nil {
+			return err
+		}
 	}
 
-	// path param wonderful
-	if err := r.SetPathParam("wonderful", swag.FormatInt64(o.Wonderful)); err != nil {
-		return err
+	// query array param status
+
+	// query param unresolved
+	qrUnresolved := o.Unresolved
+	qUnresolved := swag.FormatBool(qrUnresolved)
+	if qUnresolved != "" && qUnresolved != "-1" {
+		if err := r.SetQueryParam("unresolved", qUnresolved); err != nil {
+			return err
+		}
 	}
+
+	// query array param unresolved
+
+	// query param wonderful
+	qrWonderful := o.Wonderful
+	qWonderful := swag.FormatInt64(qrWonderful)
+	if qWonderful != "" && qWonderful != "-1" {
+		if err := r.SetQueryParam("wonderful", qWonderful); err != nil {
+			return err
+		}
+	}
+
+	// query array param wonderful
 
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)

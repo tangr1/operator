@@ -77,21 +77,13 @@ func NewDeleteCommentsIDOK() *DeleteCommentsIDOK {
 成功删除评论
 */
 type DeleteCommentsIDOK struct {
-	Payload *models.Comment
 }
 
 func (o *DeleteCommentsIDOK) Error() string {
-	return fmt.Sprintf("[DELETE /comments/{id}/][%d] deleteCommentsIdOK  %+v", 200, o.Payload)
+	return fmt.Sprintf("[DELETE /comments/{id}/][%d] deleteCommentsIdOK ", 200)
 }
 
 func (o *DeleteCommentsIDOK) readResponse(response client.Response, consumer httpkit.Consumer, formats strfmt.Registry) error {
-
-	o.Payload = new(models.Comment)
-
-	// response payload
-	if err := consumer.Consume(response.Body(), o.Payload); err != nil {
-		return err
-	}
 
 	return nil
 }

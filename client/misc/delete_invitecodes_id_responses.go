@@ -77,21 +77,13 @@ func NewDeleteInvitecodesIDOK() *DeleteInvitecodesIDOK {
 成功删除邀请码
 */
 type DeleteInvitecodesIDOK struct {
-	Payload *models.InviteCode
 }
 
 func (o *DeleteInvitecodesIDOK) Error() string {
-	return fmt.Sprintf("[DELETE /invitecodes/{id}/][%d] deleteInvitecodesIdOK  %+v", 200, o.Payload)
+	return fmt.Sprintf("[DELETE /invitecodes/{id}/][%d] deleteInvitecodesIdOK ", 200)
 }
 
 func (o *DeleteInvitecodesIDOK) readResponse(response client.Response, consumer httpkit.Consumer, formats strfmt.Registry) error {
-
-	o.Payload = new(models.InviteCode)
-
-	// response payload
-	if err := consumer.Consume(response.Body(), o.Payload); err != nil {
-		return err
-	}
 
 	return nil
 }

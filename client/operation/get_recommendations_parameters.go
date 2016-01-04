@@ -50,15 +50,27 @@ func (o *GetRecommendationsParams) WriteToRequest(r client.Request, reg strfmt.R
 
 	var res []error
 
-	// path param page
-	if err := r.SetPathParam("page", swag.FormatInt64(o.Page)); err != nil {
-		return err
+	// query param page
+	qrPage := o.Page
+	qPage := swag.FormatInt64(qrPage)
+	if qPage != "" && qPage != "-1" {
+		if err := r.SetQueryParam("page", qPage); err != nil {
+			return err
+		}
 	}
 
-	// path param pagesize
-	if err := r.SetPathParam("pagesize", swag.FormatInt64(o.Pagesize)); err != nil {
-		return err
+	// query array param page
+
+	// query param pagesize
+	qrPagesize := o.Pagesize
+	qPagesize := swag.FormatInt64(qrPagesize)
+	if qPagesize != "" && qPagesize != "-1" {
+		if err := r.SetQueryParam("pagesize", qPagesize); err != nil {
+			return err
+		}
 	}
+
+	// query array param pagesize
 
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
