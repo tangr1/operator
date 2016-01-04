@@ -30,6 +30,9 @@ import (
 	"github.com/olekukonko/tablewriter"
 	"github.com/gosuri/uitable"
 	"github.com/labstack/gommon/color"
+	httptransport "github.com/go-swagger/go-swagger/httpkit/client"
+	"github.com/go-swagger/go-swagger/spec"
+	"github.com/go-swagger/go-swagger/strfmt"
 )
 
 const (
@@ -91,6 +94,7 @@ const (
 
 var writer client.AuthInfoWriter
 var codes map[string]*models.Code
+var apiClient *operations.CtoFunds
 
 // This represents the base command when called without any subcommands
 var RootCmd = &cobra.Command{
@@ -103,20 +107,18 @@ var RootCmd = &cobra.Command{
 	//	Run: func(cmd *cobra.Command, args []string) { },
 }
 
-// Execute adds all child commands to the root command sets flags appropriately.
-// This is called by main.main(). It only needs to happen once to the rootCmd.
-func Execute() {
-	if err := RootCmd.Execute(); err != nil {
-		fmt.Println(err)
-		os.Exit(-1)
-	}
-}
-
-func init() {
-	miscClient := *operations.Default.Misc
-	codeResult, err := miscClient.GetCodes(nil, writer)
+func Execute(server string) error {
+	swaggerSpec, err := spec.New(operations.SwaggerJSON, "")
 	if err != nil {
-		fmt.Printf("获取码表失败: %v\n", err)
+		// the swagger spec is valid because it was used to generated this code.
+		panic(err)
+	}
+	runtime := httptransport.New(swaggerSpec)
+	runtime.Host = server
+	apiClient = operations.New(runtime, strfmt.Default)
+	codeResult, err := apiClient.Misc.GetCodes(nil, writer)
+	if err != nil {
+		fmt.Printf("获取码表失败, 退出程序: %v\n", err)
 		os.Exit(1)
 	}
 	codes = make(map[string]*models.Code)
@@ -124,6 +126,10 @@ func init() {
 		codes[code.Name] = code
 	}
 
+	return RootCmd.Execute()
+}
+
+func init() {
 	// Here you will define your flags and configuration settings.
 	// Cobra supports Persistent Flags, which, if defined here,
 	// will be global for your application.

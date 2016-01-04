@@ -23,6 +23,12 @@ import (
 )
 
 func main() {
+	var server string
+	if len(os.Args) > 1 {
+		server = os.Args[1]
+	} else {
+		server = "localhost:8090"
+	}
 	cmd.RootCmd.Help()
 	rl, err := readline.NewEx(&readline.Config{
 		Prompt: "hicto > ",
@@ -41,7 +47,7 @@ func main() {
 		args := strings.Fields(line)
 		os.Args = []string{"./hicto"}
 		os.Args = append(os.Args, args...)
-		err = cmd.RootCmd.Execute()
+		err = cmd.Execute(server)
 		if err != nil {
 			color.Red("无效的命令，请运行 help 获得帮助")
 		}

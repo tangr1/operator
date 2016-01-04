@@ -18,7 +18,6 @@ import (
 	httpclient "github.com/go-swagger/go-swagger/httpkit/client"
 
 	"github.com/spf13/cobra"
-	"github.com/tangr1/hicto/client"
 	"github.com/tangr1/hicto/models"
 	"github.com/tangr1/hicto/client/security"
 	"github.com/fatih/color"
@@ -36,10 +35,9 @@ var loginCmd = &cobra.Command{
 		if len(args) == 0 {
 			cmd.Usage()
 		} else {
-			securityClient := operations.Default.Security
 			if operator {
 				body := &models.AuthenticationRequest{Email: args[0], Password: password}
-				loginResult, err := securityClient.PostOperatorLogin(&security.PostOperatorLoginParams{Body: body}, writer)
+				loginResult, err := apiClient.Security.PostOperatorLogin(&security.PostOperatorLoginParams{Body: body}, writer)
 				if err == nil {
 					color.Green("登录成功")
 					writer = httpclient.APIKeyAuth("X-AUTH-TOKEN", "header", loginResult.Payload.Token)
@@ -48,7 +46,7 @@ var loginCmd = &cobra.Command{
 				}
 			} else {
 				body := &models.AuthenticationRequest{Email: args[0], Password: password}
-				loginResult, err := securityClient.PostAuthLogin(&security.PostAuthLoginParams{Body: body}, writer)
+				loginResult, err := apiClient.Security.PostAuthLogin(&security.PostAuthLoginParams{Body: body}, writer)
 				if err == nil {
 					color.Green("登录成功")
 					writer = httpclient.APIKeyAuth("X-AUTH-TOKEN", "header", loginResult.Payload.Token)

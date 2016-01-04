@@ -18,19 +18,19 @@ import (
 	"strconv"
 
 	"github.com/spf13/cobra"
-	"github.com/tangr1/hicto/client"
 	"github.com/tangr1/hicto/client/startup"
 	"github.com/tangr1/hicto/models"
 	"strings"
 	"github.com/fatih/color"
 )
 
-var startupClient = *operations.Default.Startup
 var reviewStatus string
 var advice string
 
 type Startup struct {
 	ID              string `chinese:"ID" list:"true"`
+	Name string `chinese:"名称" list:"true"`
+	RegistrationName string `chinese:"注册名称" list:"true"`
 	Certificate     string `chinese:"证书"`
 	City            string `chinese:"城市" code:"city" list:"true"`
 	ConsumeCtoCoins string `chinese:"消耗的悬赏分"`
@@ -39,18 +39,16 @@ type Startup struct {
 	CtoCoins        string `chinese:"可用的悬赏分"`
 	Description     string `chinese:"介绍"`
 	Domain          string `chinese:"领域" code:"domain" list:"true"`
-	Founders        string `chinese:"创始人"`
+	Founders        string `chinese:"创始人" list:"true"`
 	HelpedExperts   string `chinese:"帮助该企业过的专家"`
 	Homepage        string `chinese:"主页" list:"true"`
+	RunningStatus string `chinese:"运营状态" code:"runningStatus" list:"true"`
 	InvestmentStatus string `chinese:"融资状态" code:"investmentStatus" list:"true"`
-	Investors string `chinese:"投资人"`
+	Investors string `chinese:"投资人" list:"true"`
 	Logo string `chinese:"Logo"`
-	Name string `chinese:"名称" list:"true"`
 	Products string `chinese:"产品"`
-	RegistrationName string `chinese:"注册名称" list:"true"`
 	ResolvedTopicCount string `chinese:"被解答的问题数"`
 	ReviewStatus string `chinese:"审核状态" code:"reviewStatus" list:"true"`
-	RunningStatus string `chinese:"运营状态" code:"runningStatus" list:"true"`
 	StaffNumber string `chinese:"员工人数" code:"staffNumber"`
 	StartYear string `chinese:"成立年份"`
 	StartMonth string `chinese:"成立月份"`
@@ -58,27 +56,45 @@ type Startup struct {
 	ViewCount string `chinese:"被浏览次数"`
 }
 
+func ToStartupRecord(from *models.Startup) interface{} {
+	var to Startup
+	ModelToRecord(from, &to)
+	founders := make([]string, len(from.Founders))
+	for i, founder := range from.Founders {
+		founders[i] = founder.Name
+	}
+	to.Founders = strings.Join(founders, ", ")
+	products := make([]string, len(from.Products))
+	for i, product := range from.Products {
+		products[i] = product.Name
+	}
+	to.Products = strings.Join(products, ", ")
+	experts := make([]string, len(from.HelpedExperts))
+	for i, expert := range from.HelpedExperts {
+		experts[i] = expert.Name
+	}
+	to.HelpedExperts = strings.Join(experts, ", ")
+	to.Investors = strings.Join(from.Investors, ", ")
+	return to
+}
+
 func ListStartup() {
-	result, err := startupClient.GetStartups(nil, writer)
+	result, err := apiClient.Startup.GetStartups(nil, writer)
 	if err != nil {
 		color.Red("获取创业公司列表失败: %v\n", err)
 		return
 	}
 	startups := make([]interface{}, len(result.Payload.Content))
 	for i, from := range result.Payload.Content {
-		var to Startup
-		ModelToRecord(from, &to)
-		startups[i] = to
+		startups[i] = ToStartupRecord(&from)
 	}
 	ListRecords(startups)
 }
 
 func GetStartup(id int64) {
-	result, err := startupClient.GetStartupsID(&startup.GetStartupsIDParams{ID: id}, writer)
+	result, err := apiClient.Startup.GetStartupsID(&startup.GetStartupsIDParams{ID: id}, writer)
 	if err == nil {
-		var startup Startup
-		ModelToRecord(result.Payload, &startup)
-		ShowRecord(startup)
+		ShowRecord(ToStartupRecord(result.Payload))
 	} else {
 		color.Red("获取创业公司失败: %v\n", err)
 	}
@@ -86,11 +102,9 @@ func GetStartup(id int64) {
 
 func UpdateStartup(id int64, reviewStatus int32, advice string) {
 	body := &models.UpdateStartupRequest{ReviewStatus: reviewStatus, ModifyReason: advice}
-	result, err := startupClient.PutStartupsID(&startup.PutStartupsIDParams{ID: id, Body: body}, writer)
+	result, err := apiClient.Startup.PutStartupsID(&startup.PutStartupsIDParams{ID: id, Body: body}, writer)
 	if err == nil {
-		var startup Startup
-		ModelToRecord(result.Payload, &startup)
-		ShowRecord(startup)
+		ShowRecord(ToStartupRecord(result.Payload))
 	} else {
 		color.Red("更新创业公司失败: %v\n", err)
 	}
