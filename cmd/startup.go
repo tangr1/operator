@@ -96,6 +96,9 @@ var startupCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		cmd.Usage()
 	},
+	PostRun: func(cmd *cobra.Command, args []string) {
+		ResetFlags(cmd)
+	},
 }
 
 var startupListCmd = &cobra.Command{
@@ -103,9 +106,13 @@ var startupListCmd = &cobra.Command{
 	Short: "查看创业公司列表",
 	Long: "查看创业公司列表",
 	Run: func(cmd *cobra.Command, args []string) {
-		page, _ := strconv.ParseInt(cmd.Flag("page").Value.String(), 10, 64)
-		pageSize, _ := strconv.ParseInt(cmd.Flag("page-size").Value.String(), 10, 64)
-		result, err := apiClient.Startup.GetStartups(&startup.GetStartupsParams{page, pageSize, 2,}, writer)
+		params := startup.GetStartupsParams {
+			Page: IgnoreErrorInt64(cmd.Flags().GetInt64("page")),
+			Pagesize: IgnoreErrorInt64(cmd.Flags().GetInt64("page-size")),
+			Reviewstatus: IgnoreErrorInt64(cmd.Flags().GetInt64("review-status")),
+		}
+		params.Reviewstatus = 2
+		result, err := apiClient.Startup.GetStartups(&params, writer)
 		if err != nil {
 			color.Red("获取创业公司列表失败: %v\n", err)
 			return
@@ -115,7 +122,8 @@ var startupListCmd = &cobra.Command{
 			startups[i] = ToStartupRecord(&from)
 		}
 		if operator {
-			result, err = apiClient.Startup.GetStartups(&startup.GetStartupsParams{page, pageSize, 1,}, writer)
+			params.Reviewstatus = 1
+			result, err = apiClient.Startup.GetStartups(&params, writer)
 			if err != nil {
 				color.Red("获取创业公司列表失败: %v\n", err)
 				return
@@ -123,7 +131,8 @@ var startupListCmd = &cobra.Command{
 			for _, from := range result.Payload.Content {
 				startups = append(startups, ToStartupRecord(&from))
 			}
-			result, err = apiClient.Startup.GetStartups(&startup.GetStartupsParams{page, pageSize, 3,}, writer)
+			params.Reviewstatus = 3
+			result, err = apiClient.Startup.GetStartups(&params, writer)
 			if err != nil {
 				color.Red("获取创业公司列表失败: %v\n", err)
 				return
@@ -133,6 +142,9 @@ var startupListCmd = &cobra.Command{
 			}
 		}
 		ListRecords(startups)
+	},
+	PostRun: func(cmd *cobra.Command, args []string) {
+		ResetFlags(cmd)
 	},
 }
 
@@ -152,6 +164,9 @@ var startupGetCmd = &cobra.Command{
 		} else {
 			cmd.Usage()
 		}
+	},
+	PostRun: func(cmd *cobra.Command, args []string) {
+		ResetFlags(cmd)
 	},
 }
 
@@ -173,6 +188,9 @@ var startupUpdateCmd = &cobra.Command{
 			cmd.Usage()
 		}
 	},
+	PostRun: func(cmd *cobra.Command, args []string) {
+		ResetFlags(cmd)
+	},
 }
 
 var startupApproveCmd = &cobra.Command{
@@ -186,6 +204,9 @@ var startupApproveCmd = &cobra.Command{
 		} else {
 			cmd.Usage()
 		}
+	},
+	PostRun: func(cmd *cobra.Command, args []string) {
+		ResetFlags(cmd)
 	},
 }
 
@@ -204,11 +225,15 @@ var startupSendbackCmd = &cobra.Command{
 			cmd.Usage()
 		}
 	},
+	PostRun: func(cmd *cobra.Command, args []string) {
+		ResetFlags(cmd)
+	},
 }
 
 func init() {
 	startupListCmd.Flags().Int64P("page", "p", 0, "页码")
-	startupListCmd.Flags().Int64P("page-size", "s", 100, "每页条目数")
+	startupListCmd.Flags().Int64P("page-size", "P", 100, "每页条目数")
+	startupListCmd.Flags().Int64P("review-status", "r", 100, "审核状态")
 	startupCmd.AddCommand(startupListCmd)
 	startupCmd.AddCommand(startupGetCmd)
 	startupCmd.AddCommand(startupApproveCmd)

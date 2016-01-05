@@ -24,18 +24,6 @@ import (
 	"io"
 )
 
-var topicsParams = topic.GetTopicsParams {
-	Authorid: -1,
-	Category: "",
-	Page: 0,
-	Pagesize: 100,
-	Resolved: false,
-	Startupid: -1,
-	Status: 1,
-	Unresolved: false,
-	Wonderful: -1,
-}
-
 type Topic struct {
 	ID              string `chinese:"ID" list:"true"`
 	Title              string `chinese:"标题" list:"true"`
@@ -72,6 +60,9 @@ var topicCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		cmd.Usage()
 	},
+	PostRun: func(cmd *cobra.Command, args []string) {
+		ResetFlags(cmd)
+	},
 }
 
 var topicListCmd = &cobra.Command{
@@ -79,7 +70,17 @@ var topicListCmd = &cobra.Command{
 	Short: "查看问题列表",
 	Long: "查看问题列表",
 	Run: func(cmd *cobra.Command, args []string) {
-		var params = topicsParams
+		params := topic.GetTopicsParams{
+			Page: IgnoreErrorInt64(cmd.Flags().GetInt64("page")),
+			Pagesize: IgnoreErrorInt64(cmd.Flags().GetInt64("page-size")),
+			Category: IgnoreErrorInt64(cmd.Flags().GetInt64("category")),
+			Resolved: IgnoreErrorBool(cmd.Flags().GetBool("resolved")),
+			Unresolved: IgnoreErrorBool(cmd.Flags().GetBool("unresolved")),
+			Startupid: IgnoreErrorInt64(cmd.Flags().GetInt64("startup-id")),
+			Authorid: IgnoreErrorInt64(cmd.Flags().GetInt64("author-id")),
+			Status: IgnoreErrorInt64(cmd.Flags().GetInt64("status")),
+			Wonderful: IgnoreErrorInt64(cmd.Flags().GetInt64("wonderful")),
+		}
 		result, err := apiClient.Topic.GetTopics(&params, writer)
 		if err != nil {
 			color.Red("获取问题列表失败: %v\n", err)
@@ -111,6 +112,9 @@ var topicListCmd = &cobra.Command{
 		}
 		ListRecords(topics)
 	},
+	PostRun: func(cmd *cobra.Command, args []string) {
+		ResetFlags(cmd)
+	},
 }
 
 var topicGetCmd = &cobra.Command{
@@ -129,6 +133,9 @@ var topicGetCmd = &cobra.Command{
 		} else {
 			cmd.Usage()
 		}
+	},
+	PostRun: func(cmd *cobra.Command, args []string) {
+		ResetFlags(cmd)
 	},
 }
 
@@ -151,11 +158,21 @@ var topicDeleteCmd = &cobra.Command{
 			cmd.Usage()
 		}
 	},
+	PostRun: func(cmd *cobra.Command, args []string) {
+		ResetFlags(cmd)
+	},
 }
 
 func init() {
-	topicListCmd.Flags().Int64VarP(&topicsParams.Page, "page", "p", 0, "页码")
-	topicListCmd.Flags().Int64VarP(&topicsParams.Pagesize, "page-size", "P", 100, "每页条目数")
+	topicListCmd.Flags().Int64P("page", "p", 0, "页码")
+	topicListCmd.Flags().Int64P("page-size", "P", 100, "每页条目数")
+	topicListCmd.Flags().Int64P("author-id", "a", -1, "作者ID")
+	topicListCmd.Flags().Int64P("category", "c", -1, "类别")
+	topicListCmd.Flags().BoolP("resolved", "r", false, "已解决优先")
+	topicListCmd.Flags().BoolP("unresolved", "u", false, "未解决优先")
+	topicListCmd.Flags().Int64P("status", "s", 1, "问题状态")
+	topicListCmd.Flags().Int64P("startup-id", "S", -1, "创业公司ID")
+	topicListCmd.Flags().Int64P("wonderful", "w", -1, "精彩话题数")
 	topicCmd.AddCommand(topicListCmd)
 	topicCmd.AddCommand(topicGetCmd)
 	topicCmd.AddCommand(topicDeleteCmd)

@@ -34,6 +34,7 @@ import (
 	httptransport "github.com/go-swagger/go-swagger/httpkit/client"
 	"github.com/go-swagger/go-swagger/spec"
 	"github.com/go-swagger/go-swagger/strfmt"
+	"github.com/spf13/pflag"
 )
 
 const (
@@ -102,14 +103,19 @@ var RootCmd = &cobra.Command{
 	Use:           "hicto",
 	Short:         "HiCTO 客户端命令行工具",
 	Long:          "HiCTO 客户端命令行工具",
-	SilenceErrors: true,
+	// SilenceErrors: true,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
 	//	Run: func(cmd *cobra.Command, args []string) { },
+	PostRun: func(cmd *cobra.Command, args []string) {
+		ResetFlags(cmd)
+	},
 }
 
 func Execute() error {
-	return RootCmd.Execute()
+	cmd, err := RootCmd.ExecuteC()
+	cmd.Flag("help").Value.Set("false")
+	return err
 }
 
 func init() {
@@ -131,7 +137,7 @@ func init() {
 	apiClient = operations.New(runtime, strfmt.Default)
 	codeResult, err := apiClient.Misc.GetCodes(nil, writer)
 	if err != nil {
-		fmt.Printf("获取码表失败, 退出程序: %v\n", err)
+		fatihcolor.Red("获取码表失败, 退出程序 %s\n", err.Error())
 		os.Exit(1)
 	}
 	codes = make(map[string]*models.Code)
@@ -247,4 +253,22 @@ func ModelToRecord(from interface{}, to interface{}) {
 			break;
 		}
 	}
+}
+
+func ResetFlags(cmd *cobra.Command) {
+	cmd.Flags().VisitAll(func(flag *pflag.Flag) {
+		flag.Value.Set(flag.DefValue)
+	})
+}
+
+func IgnoreErrorInt64(i int64, err error) (int64) {
+	return i
+}
+
+func IgnoreErrorBool(b bool, err error) (bool) {
+	return b
+}
+
+func IgnoreErrorString(s string, err error) (string) {
+	return s
 }

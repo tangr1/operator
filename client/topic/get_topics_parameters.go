@@ -30,7 +30,7 @@ type GetTopicsParams struct {
 	  主题类别
 
 	*/
-	Category string
+	Category int64
 	/*Page
 	  当前页码
 
@@ -75,7 +75,7 @@ func (o *GetTopicsParams) WithAuthorid(authorid int64) *GetTopicsParams {
 }
 
 // WithCategory adds the category to the get topics params
-func (o *GetTopicsParams) WithCategory(category string) *GetTopicsParams {
+func (o *GetTopicsParams) WithCategory(category int64) *GetTopicsParams {
 	o.Category = category
 	return o
 }
@@ -140,7 +140,7 @@ func (o *GetTopicsParams) WriteToRequest(r client.Request, reg strfmt.Registry) 
 
 	// query param category
 	qrCategory := o.Category
-	qCategory := qrCategory
+	qCategory := swag.FormatInt64(qrCategory)
 	if qCategory != "" && qCategory != "-1" {
 		if err := r.SetQueryParam("category", qCategory); err != nil {
 			return err

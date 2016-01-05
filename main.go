@@ -43,7 +43,7 @@ func main() {
 		os.Args = append(os.Args, args...)
 		err = cmd.Execute()
 		if err != nil {
-			color.Red("无效的命令，请运行 help 获得帮助")
+			color.Red("输入有误, 错误为 " + err.Error());
 		}
 	}
 }
