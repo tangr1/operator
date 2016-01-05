@@ -69,6 +69,52 @@ func (a *Client) DeleteStarsID(params *DeleteStarsIDParams, authInfo client.Auth
 	return result.(*DeleteStarsIDOK), nil
 }
 
+/*查看反馈列表
+
+查看所有反馈，支持分页和过滤器
+
+*/
+func (a *Client) GetFeedbacks(params *GetFeedbacksParams, authInfo client.AuthInfoWriter) (*GetFeedbacksOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewGetFeedbacksParams()
+	}
+
+	result, err := a.transport.Submit(&client.Operation{
+		ID:       "GetFeedbacks",
+		Params:   params,
+		Reader:   &GetFeedbacksReader{formats: a.formats},
+		AuthInfo: authInfo,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.(*GetFeedbacksOK), nil
+}
+
+/*查询反馈
+
+得到指定反馈的具体信息
+
+*/
+func (a *Client) GetFeedbacksID(params *GetFeedbacksIDParams, authInfo client.AuthInfoWriter) (*GetFeedbacksIDOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewGetFeedbacksIDParams()
+	}
+
+	result, err := a.transport.Submit(&client.Operation{
+		ID:       "GetFeedbacksID",
+		Params:   params,
+		Reader:   &GetFeedbacksIDReader{formats: a.formats},
+		AuthInfo: authInfo,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.(*GetFeedbacksIDOK), nil
+}
+
 /*查看推荐列表
 
 查看所有推荐，支持分页和过滤器
@@ -159,6 +205,29 @@ func (a *Client) GetStarsLatest(params *GetStarsLatestParams, authInfo client.Au
 		return nil, err
 	}
 	return result.(*GetStarsLatestOK), nil
+}
+
+/*创建反馈
+
+根据请求创建反馈
+
+*/
+func (a *Client) PostFeedbacks(params *PostFeedbacksParams, authInfo client.AuthInfoWriter) (*PostFeedbacksCreated, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewPostFeedbacksParams()
+	}
+
+	result, err := a.transport.Submit(&client.Operation{
+		ID:       "PostFeedbacks",
+		Params:   params,
+		Reader:   &PostFeedbacksReader{formats: a.formats},
+		AuthInfo: authInfo,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.(*PostFeedbacksCreated), nil
 }
 
 /*创建推荐
