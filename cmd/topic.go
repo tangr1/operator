@@ -90,26 +90,6 @@ var topicListCmd = &cobra.Command{
 		for i, from := range result.Payload.Content {
 			topics[i] = ToTopicRecord(&from)
 		}
-		if operator {
-			params.Status = 2
-			result, err = apiClient.Topic.GetTopics(&params, writer)
-			if err != nil {
-				color.Red("获取问题列表失败: %v\n", err)
-				return
-			}
-			for _, from := range result.Payload.Content {
-				topics = append(topics, from)
-			}
-			params.Status = 3
-			result, err = apiClient.Topic.GetTopics(&params, writer)
-			if err != nil {
-				color.Red("获取问题列表失败: %v\n", err)
-				return
-			}
-			for _, from := range result.Payload.Content {
-				topics = append(topics, from)
-			}
-		}
 		ListRecords(topics)
 	},
 	PostRun: func(cmd *cobra.Command, args []string) {
@@ -163,6 +143,68 @@ var topicDeleteCmd = &cobra.Command{
 	},
 }
 
+var topicDeleteApproveCmd = &cobra.Command{
+	Use:   "approve ID",
+	Short: "通过问题删除申请",
+	Long: "通过问题删除申请",
+	Run: func(cmd *cobra.Command, args []string) {
+		if len(args) == 1 {
+			id, _ := strconv.ParseInt(args[0], 10, 64)
+			body := models.UpdateTopicRequest {
+				Status: 3,
+			}
+			result, err := apiClient.Topic.PutTopicsID(&topic.PutTopicsIDParams{ID: id, Body: &body}, writer)
+			if err == nil {
+				ShowRecord(ToTopicRecord(result.Payload))
+			} else {
+				color.Red("更新问题失败: %v\n", err)
+			}
+		} else {
+			cmd.Usage()
+		}
+	},
+	PostRun: func(cmd *cobra.Command, args []string) {
+		ResetFlags(cmd)
+	},
+}
+
+var topicDeleteRejectCmd = &cobra.Command{
+	Use:   "reject ID [REJECT-REASON]",
+	Short: "拒绝问题删除申请",
+	Long: "拒绝问题删除申请",
+	Run: func(cmd *cobra.Command, args []string) {
+		if len(args) == 1 {
+			id, _ := strconv.ParseInt(args[0], 10, 64)
+			body := models.UpdateTopicRequest {
+				Status: 1,
+			}
+			result, err := apiClient.Topic.PutTopicsID(&topic.PutTopicsIDParams{ID: id, Body: &body}, writer)
+			if err == nil {
+				ShowRecord(ToTopicRecord(result.Payload))
+			} else {
+				color.Red("更新问题失败: %v\n", err)
+			}
+		} else if len(args) == 2 {
+			id, _ := strconv.ParseInt(args[0], 10, 64)
+			body := models.UpdateTopicRequest {
+				Status: 1,
+				RejectReason: args[1],
+			}
+			result, err := apiClient.Topic.PutTopicsID(&topic.PutTopicsIDParams{ID: id, Body: &body}, writer)
+			if err == nil {
+				ShowRecord(ToTopicRecord(result.Payload))
+			} else {
+				color.Red("更新问题失败: %v\n", err)
+			}
+		} else {
+			cmd.Usage()
+		}
+	},
+	PostRun: func(cmd *cobra.Command, args []string) {
+		ResetFlags(cmd)
+	},
+}
+
 func init() {
 	topicListCmd.Flags().Int64P("page", "p", 0, "页码")
 	topicListCmd.Flags().Int64P("page-size", "P", 100, "每页条目数")
@@ -176,5 +218,7 @@ func init() {
 	topicCmd.AddCommand(topicListCmd)
 	topicCmd.AddCommand(topicGetCmd)
 	topicCmd.AddCommand(topicDeleteCmd)
+	topicCmd.AddCommand(topicDeleteApproveCmd)
+	topicCmd.AddCommand(topicDeleteRejectCmd)
 	RootCmd.AddCommand(topicCmd)
 }

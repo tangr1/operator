@@ -56,6 +56,9 @@ var loginCmd = &cobra.Command{
 			}
 		}
 	},
+	PostRun: func(cmd *cobra.Command, args []string) {
+		ResetFlags(cmd)
+	},
 }
 
 func init() {

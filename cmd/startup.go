@@ -121,26 +121,6 @@ var startupListCmd = &cobra.Command{
 		for i, from := range result.Payload.Content {
 			startups[i] = ToStartupRecord(&from)
 		}
-		if operator {
-			params.Reviewstatus = 1
-			result, err = apiClient.Startup.GetStartups(&params, writer)
-			if err != nil {
-				color.Red("获取创业公司列表失败: %v\n", err)
-				return
-			}
-			for _, from := range result.Payload.Content {
-				startups = append(startups, ToStartupRecord(&from))
-			}
-			params.Reviewstatus = 3
-			result, err = apiClient.Startup.GetStartups(&params, writer)
-			if err != nil {
-				color.Red("获取创业公司列表失败: %v\n", err)
-				return
-			}
-			for _, from := range result.Payload.Content {
-				startups = append(startups, ToStartupRecord(&from))
-			}
-		}
 		ListRecords(startups)
 	},
 	PostRun: func(cmd *cobra.Command, args []string) {
@@ -238,8 +218,6 @@ func init() {
 	startupCmd.AddCommand(startupGetCmd)
 	startupCmd.AddCommand(startupApproveCmd)
 	startupCmd.AddCommand(startupSendbackCmd)
-	startupUpdateCmd.Flags().StringVarP(&reviewStatus, "review-status", "r", "", "审核状态, 可为approve或者sendback")
-	startupUpdateCmd.Flags().StringVarP(&advice, "advice", "a", "", "修改建议, 当审核状态为sendback时需要填写")
 	startupCmd.AddCommand(startupUpdateCmd)
 	RootCmd.AddCommand(startupCmd)
 }
