@@ -29,7 +29,7 @@ type AuthenticationResponse struct {
 
 	/* 是否为创业公司员工
 	 */
-	Startup *bool `json:"startup,omitempty"`
+	Startup bool `json:"startup,omitempty"`
 
 	/* 访问token
 	 */

@@ -27,7 +27,7 @@ import (
 type Topic struct {
 	ID              string `chinese:"ID" list:"true"`
 	Title              string `chinese:"标题" list:"true"`
-	Summary              string `chinese:"摘要"`
+	Summary              string `chinese:"摘要" list:"true"`
 	Content              string `chinese:"内容"`
 	Category string `chinese:"类别" list:"true" code:"category"`
 	CtoCoins string `chinese:"悬赏分" list:"true"`

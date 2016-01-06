@@ -20,6 +20,7 @@ import (
 	"strconv"
 	"github.com/tangr1/hicto/client/expert"
 	"github.com/fatih/color"
+	"strings"
 )
 
 type Expert struct {
@@ -45,11 +46,11 @@ type Expert struct {
 	InviteQuota string `chinese:"可邀请专家数"`
 	InviteUsed string `chinese:"已邀请专家数"`
 	ManagementSkill string `chinese:"管理技能" list:"true" code:"managementSkill"`
-	NotifyCommentNewCommentByEmail string `chinese:"是否接收自己评论的新评论邮件通知"`
-	NotifyCommentNewCommentByPush string `chinese:"是否接收自己评论的新评论推送通知"`
-	NotifyNewExpertByEmail string `chinese:"是否接收新主题邮件通知"`
-	NotifyNewExpertByPush string `chinese:"是否接收新主题推送通知"`
+	NotifyNewTopicByPush string `chinese:"是否接收新主题推送通知"`
 	NotifyOnlyFreeTime string `chinese:"是否只在空闲时间发通知"`
+	NotifyNewTopicByEmail string `chinese:"是否接收新主题邮件通知"`
+	NotifyCommentNewCommentByEmail string `chinese:"是否接收评论的新评论邮件通知"`
+	NotifyCommentNewCommentByPush string `chinese:"是否接收评论的新评论推送通知"`
 	NotifyReplyAcceptedByEmail string `chinese:"是否接收答案被采纳邮件通知"`
 	NotifyReplyAcceptedByPush string `chinese:"是否接收答案被采纳推送通知"`
 	NotifyReplyNewCommentByEmail string `chinese:"是否接收答案的新评论邮件通知"`
@@ -60,6 +61,16 @@ type Expert struct {
 func ToExpertRecord(from *models.Expert) interface{} {
 	var to Expert
 	ModelToRecord(from, &to)
+	startups := make([]string, len(from.HelpedStartups))
+	for i, startup := range from.HelpedStartups {
+		startups[i] = startup.Name
+	}
+	to.HelpedStartups = strings.Join(startups, ", ")
+	expertises := make([]string, len(from.Expertise))
+	for i, expertise := range from.Expertise {
+		expertises[i] = GetCode("category", expertise)
+	}
+	to.Expertise = strings.Join(expertises, ", ")
 	return to
 }
 
@@ -77,8 +88,8 @@ var expertCmd = &cobra.Command{
 
 var expertListCmd = &cobra.Command{
 	Use:   "list",
-	Short: "查看问题列表",
-	Long: "查看问题列表",
+	Short: "查看员工列表",
+	Long: "查看员工列表",
 	Run: func(cmd *cobra.Command, args []string) {
 		params := expert.GetExpertsParams {
 			Page: IgnoreErrorInt64(cmd.Flags().GetInt64("page")),

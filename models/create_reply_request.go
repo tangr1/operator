@@ -18,7 +18,7 @@ type CreateReplyRequest struct {
 
 	/* 是否匿名发布
 	 */
-	Anonymous *bool `json:"anonymous,omitempty"`
+	Anonymous bool `json:"anonymous,omitempty"`
 
 	/* 发布内容
 

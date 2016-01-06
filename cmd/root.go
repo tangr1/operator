@@ -114,7 +114,9 @@ var RootCmd = &cobra.Command{
 
 func Execute() error {
 	cmd, err := RootCmd.ExecuteC()
-	cmd.Flag("help").Value.Set("false")
+	if err == nil {
+		cmd.Flag("help").Value.Set("false")
+	}
 	return err
 }
 
@@ -132,7 +134,7 @@ func init() {
 	if len(os.Args) > 1 {
 		runtime.Host = os.Args[1]
 	} else {
-		runtime.Host = "localhost:8090"
+		runtime.Host = "115.159.100.253:8090"
 	}
 	apiClient = operations.New(runtime, strfmt.Default)
 	codeResult, err := apiClient.Misc.GetCodes(nil, writer)
@@ -177,6 +179,9 @@ func ListRecords(records []interface{}) {
 	}
 	s := structs.New(records[0])
 	table := tablewriter.NewWriter(os.Stdout)
+	table.SetAlignment(tablewriter.ALIGN_LEFT)
+	table.SetColWidth(20)
+	table.SetAutoWrapText(false)
 	var header []string
 	for _, field := range s.Fields() {
 		if len(field.Tag("list")) > 0 {

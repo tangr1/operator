@@ -53,7 +53,7 @@ type Notification struct {
 
 	/* 是否已读
 	 */
-	Read *bool `json:"read,omitempty"`
+	Read bool `json:"read,omitempty"`
 
 	/* 服务器当前时间
 	 */
@@ -61,7 +61,7 @@ type Notification struct {
 
 	/* 是否创业公司员工
 	 */
-	Startup *bool `json:"startup,omitempty"`
+	Startup bool `json:"startup,omitempty"`
 
 	/* 通知标题
 	 */

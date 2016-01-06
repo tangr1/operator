@@ -92,39 +92,39 @@ type CreateExpertRequest struct {
 
 	/* 评论被评论时邮件通知
 	 */
-	NotifyCommentNewCommentByEmail *bool `json:"notifyCommentNewCommentByEmail,omitempty"`
+	NotifyCommentNewCommentByEmail bool `json:"notifyCommentNewCommentByEmail,omitempty"`
 
 	/* 评论被评论时推送通知
 	 */
-	NotifyCommentNewCommentByPush *bool `json:"notifyCommentNewCommentByPush,omitempty"`
+	NotifyCommentNewCommentByPush bool `json:"notifyCommentNewCommentByPush,omitempty"`
 
 	/* 新主题邮件通知
 	 */
-	NotifyNewTopicByEmail *bool `json:"notifyNewTopicByEmail,omitempty"`
+	NotifyNewTopicByEmail bool `json:"notifyNewTopicByEmail,omitempty"`
 
 	/* 新主题推送通知
 	 */
-	NotifyNewTopicByPush *bool `json:"notifyNewTopicByPush,omitempty"`
+	NotifyNewTopicByPush bool `json:"notifyNewTopicByPush,omitempty"`
 
 	/* 是否只在空闲时间通知
 	 */
-	NotifyOnlyFreeTime *bool `json:"notifyOnlyFreeTime,omitempty"`
+	NotifyOnlyFreeTime bool `json:"notifyOnlyFreeTime,omitempty"`
 
 	/* 有回复被采纳时邮件通知
 	 */
-	NotifyReplyAcceptedByEmail *bool `json:"notifyReplyAcceptedByEmail,omitempty"`
+	NotifyReplyAcceptedByEmail bool `json:"notifyReplyAcceptedByEmail,omitempty"`
 
 	/* 有回复被采纳时推送通知
 	 */
-	NotifyReplyAcceptedByPush *bool `json:"notifyReplyAcceptedByPush,omitempty"`
+	NotifyReplyAcceptedByPush bool `json:"notifyReplyAcceptedByPush,omitempty"`
 
 	/* 答案或评论被评论时邮件通知
 	 */
-	NotifyReplyNewCommentByEmail *bool `json:"notifyReplyNewCommentByEmail,omitempty"`
+	NotifyReplyNewCommentByEmail bool `json:"notifyReplyNewCommentByEmail,omitempty"`
 
 	/* 答案或评论被评论时推送通知
 	 */
-	NotifyReplyNewCommentByPush *bool `json:"notifyReplyNewCommentByPush,omitempty"`
+	NotifyReplyNewCommentByPush bool `json:"notifyReplyNewCommentByPush,omitempty"`
 
 	/* 用户新密码
 

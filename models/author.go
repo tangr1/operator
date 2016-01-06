@@ -25,7 +25,7 @@ type Author struct {
 
 	/* 是否为创业公司员工
 	 */
-	Startup *bool `json:"startup,omitempty"`
+	Startup bool `json:"startup,omitempty"`
 }
 
 // Validate validates this author

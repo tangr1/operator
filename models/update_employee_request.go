@@ -18,7 +18,7 @@ type UpdateEmployeeRequest struct {
 
 	/* 是否为管理员
 	 */
-	Admin *bool `json:"admin,omitempty"`
+	Admin bool `json:"admin,omitempty"`
 
 	/* 用户头像
 
@@ -51,31 +51,31 @@ type UpdateEmployeeRequest struct {
 
 	/* 评论有评论时邮件通知
 	 */
-	NotifyCommentNewCommentByEmail *bool `json:"notifyCommentNewCommentByEmail,omitempty"`
+	NotifyCommentNewCommentByEmail bool `json:"notifyCommentNewCommentByEmail,omitempty"`
 
 	/* 评论有评论时推送通知
 	 */
-	NotifyCommentNewCommentByPush *bool `json:"notifyCommentNewCommentByPush,omitempty"`
+	NotifyCommentNewCommentByPush bool `json:"notifyCommentNewCommentByPush,omitempty"`
 
 	/* 主题有回复时邮件通知
 	 */
-	NotifyNewReplyByEmail *bool `json:"notifyNewReplyByEmail,omitempty"`
+	NotifyNewReplyByEmail bool `json:"notifyNewReplyByEmail,omitempty"`
 
 	/* 主题有回复时推送通知
 	 */
-	NotifyNewReplyByPush *bool `json:"notifyNewReplyByPush,omitempty"`
+	NotifyNewReplyByPush bool `json:"notifyNewReplyByPush,omitempty"`
 
 	/* 只当我的主题有响应时通知
 	 */
-	NotifyOnlyMyTopic *bool `json:"notifyOnlyMyTopic,omitempty"`
+	NotifyOnlyMyTopic bool `json:"notifyOnlyMyTopic,omitempty"`
 
 	/* 主题有评论时邮件通知
 	 */
-	NotifyTopicNewCommentByEmail *bool `json:"notifyTopicNewCommentByEmail,omitempty"`
+	NotifyTopicNewCommentByEmail bool `json:"notifyTopicNewCommentByEmail,omitempty"`
 
 	/* 主题有评论时推送通知
 	 */
-	NotifyTopicNewCommentByPush *bool `json:"notifyTopicNewCommentByPush,omitempty"`
+	NotifyTopicNewCommentByPush bool `json:"notifyTopicNewCommentByPush,omitempty"`
 
 	/* 用户当前密码, 如修改密码需要提供
 
