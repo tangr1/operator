@@ -19,6 +19,10 @@ type FeedbackPageableResult struct {
 	 */
 	Content []*Feedback `json:"content,omitempty"`
 
+	/* 是否最后一页
+	 */
+	First bool `json:"first,omitempty"`
+
 	/* 是否第一页
 	 */
 	Last bool `json:"last,omitempty"`

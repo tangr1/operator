@@ -26,6 +26,12 @@ type UpdateReplyRequest struct {
 	*/
 	Content string `json:"content,omitempty"`
 
+	/* 摘要
+
+	Max Length: 100
+	*/
+	Summary string `json:"summary,omitempty"`
+
 	/* 发布标题
 
 	Max Length: 255
@@ -38,6 +44,11 @@ func (m *UpdateReplyRequest) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.validateContent(formats); err != nil {
+		// prop
+		res = append(res, err)
+	}
+
+	if err := m.validateSummary(formats); err != nil {
 		// prop
 		res = append(res, err)
 	}
@@ -60,6 +71,19 @@ func (m *UpdateReplyRequest) validateContent(formats strfmt.Registry) error {
 	}
 
 	if err := validate.MaxLength("content", "body", string(m.Content), 65535); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *UpdateReplyRequest) validateSummary(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Summary) { // not required
+		return nil
+	}
+
+	if err := validate.MaxLength("summary", "body", string(m.Summary), 100); err != nil {
 		return err
 	}
 

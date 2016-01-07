@@ -31,6 +31,8 @@ type Comment struct {
 	AuthorID string `chinese:"评论作者ID" list:"true"`
 	AuthorName string `chinese:"评论作者姓名" list:"true"`
 	Content              string `chinese:"内容" list:"true"`
+	ReadableCreateTime string `chinese:"创建时间" list:"true"`
+	ReadableUpdateTime string `chinese:"更新时间" list:"true"`
 }
 
 func ToCommentRecord(from *models.Comment) interface{} {

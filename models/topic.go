@@ -22,6 +22,10 @@ type Topic struct {
 	 */
 	Category int32 `json:"category,omitempty"`
 
+	/* 评论总数
+	 */
+	CommentCount int32 `json:"commentCount,omitempty"`
+
 	/* 主题悬赏分
 	 */
 	CtoCoins int32 `json:"ctoCoins,omitempty"`

@@ -54,6 +54,8 @@ type Startup struct {
 	StartMonth string `chinese:"成立月份"`
 	TopicCount string `chinese:"提出的问题总数"`
 	ViewCount string `chinese:"被浏览次数"`
+	ReadableCreateTime string `chinese:"创建时间" list:"true"`
+	ReadableUpdateTime string `chinese:"更新时间" list:"true"`
 }
 
 func ToStartupRecord(from *models.Startup) interface{} {

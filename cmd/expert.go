@@ -55,6 +55,8 @@ type Expert struct {
 	NotifyReplyAcceptedByPush string `chinese:"是否接收答案被采纳推送通知"`
 	NotifyReplyNewCommentByEmail string `chinese:"是否接收答案的新评论邮件通知"`
 	NotifyReplyNewCommentByPush string `chinese:"是否接收答案的新评论推送通知"`
+	ReadableCreateTime string `chinese:"创建时间" list:"true"`
+	ReadableUpdateTime string `chinese:"更新时间" list:"true"`
 	ReviewStatus string `chinese:"审核状态" list:"true" code:"reviewStatus" list:"true"`
 }
 

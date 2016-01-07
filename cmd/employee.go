@@ -42,6 +42,8 @@ type Employee struct {
 	NotifyNewReplyByPush string `chinese:"是否接收问题的新答案推送通知"`
 	NotifyTopicNewCommentByEmail string `chinese:"是否接收问题的新评论邮件通知"`
 	NotifyTopicNewCommentByPush string `chinese:"是否接收问题的新评论推送通知"`
+	ReadableCreateTime string `chinese:"创建时间" list:"true"`
+	ReadableUpdateTime string `chinese:"更新时间" list:"true"`
 }
 
 func ToEmployeeRecord(from *models.Employee) interface{} {

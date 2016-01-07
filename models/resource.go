@@ -34,6 +34,14 @@ type Resource struct {
 	 */
 	Permissions []int32 `json:"permissions,omitempty"`
 
+	/* 可读创建时间
+	 */
+	ReadableCreateTime string `json:"readableCreateTime,omitempty"`
+
+	/* 可读更新时间
+	 */
+	ReadableUpdateTime string `json:"readableUpdateTime,omitempty"`
+
 	/* 服务器当前时间
 	 */
 	ServerTime int64 `json:"serverTime,omitempty"`

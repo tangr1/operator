@@ -30,6 +30,8 @@ type Reply struct {
 	AuthorID string `chinese:"答案作者ID" list:"true"`
 	AuthorName string `chinese:"答案作者姓名" list:"true"`
 	Content              string `chinese:"内容" list:"true"`
+	ReadableCreateTime string `chinese:"创建时间" list:"true"`
+	ReadableUpdateTime string `chinese:"更新时间" list:"true"`
 }
 
 func ToReplyRecord(from *models.Reply) interface{} {

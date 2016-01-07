@@ -31,12 +31,14 @@ type Topic struct {
 	Content              string `chinese:"内容"`
 	Category string `chinese:"类别" list:"true" code:"category"`
 	CtoCoins string `chinese:"悬赏分" list:"true"`
-	Tags string `chinese:"标签" list:"true"`
-	StartupName string `chinese:"问题" list:"true"`
-	AuthorName string `chinese:"问题员工" list:"true"`
+	Tags string `chinese:"标签"`
+	StartupName string `chinese:"创业公司" list:"true"`
+	AuthorName string `chinese:"创业公司员工" list:"true"`
 	ReplyCount string `chinese:"回复数" list:"true"`
 	ResolvedComment string `chinese:"采纳评论"`
 	ResolvedReplyID string `chinese:"采纳回复ID" list:"true"`
+	ReadableCreateTime string `chinese:"创建时间" list:"true"`
+	ReadableUpdateTime string `chinese:"更新时间" list:"true"`
 	Status string `chinese:"问题状态" list:"true" code:"postStatus"`
 }
 

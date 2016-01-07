@@ -55,6 +55,10 @@ type Employee struct {
 	 */
 	Position string `json:"position,omitempty"`
 
+	/* 所在创业公司审核状态
+	 */
+	StartupReviewStatus int32 `json:"startupReviewStatus,omitempty"`
+
 	/* 发过主题总数
 	 */
 	TopicCount int32 `json:"topicCount,omitempty"`
